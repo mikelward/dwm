@@ -894,6 +894,7 @@ firstcenter(Monitor *m)
 	if (n == 0)
 		return;
 
+	i = 0;
 	x = m->wx;
 	y = m->wy;
 	mw = (m->nmaster > 0) ? m->ww * m->mfact : 0;
@@ -906,8 +907,7 @@ firstcenter(Monitor *m)
 		y = m->wy;
 		w = mw / m->nmaster;
 		h = m->wh;
-		i = 0;
-		for (; i < nmaster; c = nexttiled(c->next)) {
+		for (; c && i < m->nmaster; c = nexttiled(c->next)) {
 			resize(c, x, y, w, h, 0);
 			x += w;
 			i++;
