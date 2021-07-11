@@ -805,7 +805,6 @@ firstcenter(Monitor *m)
 		h = m->wh;
 		i = 0;
 		for (c = nexttiled(m->clients); i < nmaster; c = nexttiled(c->next)) {
-			fprintf(stderr, "center client %d: %d, %d, %d, %d\n", i, x, y, w, h);
 			resize(c, x, y, w, h, 0);
 			x += w;
 			i++;
@@ -819,7 +818,6 @@ firstcenter(Monitor *m)
 		h = m->wh / (n - m->nmaster - 1);
 		y = m->wy;
 		for (; c && nexttiled(c->next) /* don't tile the last window */; c = nexttiled(c->next)) {
-			fprintf(stderr, "right client %d: %d, %d, %d, %d\n", i, x, y, w, h);
 			resize(c, x, y, w, h, 0);
 			y += h;
 			i++;
@@ -832,7 +830,6 @@ firstcenter(Monitor *m)
 		y = m->wy;
 		w = (m->ww - mw) / 2;
 		h = m->wh;
-		fprintf(stderr, "left client %d: %d, %d, %d, %d\n", i, x, y, w, h);
 		resize(c, x, y, w, h, 0);
 	}
 }
