@@ -796,9 +796,10 @@ firstcenter(Monitor *m)
 	if (n == 0)
 		return;
 
-    x = m->wx;
-    y = m->wy;
-    mw = (m->nmaster > 0) ? m->ww * m->mfact : 0;
+	x = m->wx;
+	y = m->wy;
+	mw = (m->nmaster > 0) ? m->ww * m->mfact : 0;
+	c = nexttiled(m->clients);
 
 	/* draw the master(s) first, centered */
 	/* note that left and right of master area is intentionally left empty */
@@ -808,7 +809,7 @@ firstcenter(Monitor *m)
 		w = mw / m->nmaster;
 		h = m->wh;
 		i = 0;
-		for (c = nexttiled(m->clients); i < nmaster; c = nexttiled(c->next)) {
+		for (; i < nmaster; c = nexttiled(c->next)) {
 			resize(c, x, y, w, h, 0);
 			x += w;
 			i++;
@@ -817,7 +818,7 @@ firstcenter(Monitor *m)
 
 	/* draw all but one of the remaining windows in a single stack, tiled */
 	if (n > m->nmaster + 1) {
-        /* retain c and x */
+		/* retain c and x */
 		w = m->ww - x;
 		h = m->wh / (n - m->nmaster - 1);
 		y = m->wy;
