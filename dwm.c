@@ -794,11 +794,11 @@ firstcenter(Monitor *m)
 
     x = m->wx;
     y = m->wy;
+    mw = (m->nmaster > 0) ? m->ww * m->mfact : 0;
 
 	/* draw the master(s) first, centered */
 	/* note that left and right of master area is intentionally left empty */
 	if (m->nmaster > 0) {
-		mw = m->ww * m->mfact;
 		x = m->wx + (m->ww - mw) /  2;
 		y = m->wy;
 		w = mw / m->nmaster;
