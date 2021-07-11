@@ -165,6 +165,7 @@ static void drawbar(Monitor *m);
 static void drawbars(void);
 static void enternotify(XEvent *e);
 static void expose(XEvent *e);
+static void firstcenter(Monitor *m);
 static void focus(Client *c);
 static void focusin(XEvent *e);
 static void focusmon(const Arg *arg);
@@ -783,6 +784,58 @@ expose(XEvent *e)
 
 	if (ev->count == 0 && (m = wintomon(ev->window)))
 		drawbar(m);
+}
+
+void
+firstcenter(Monitor *m)
+{
+	unsigned int i, n, x, y, w, h, mw;
+	Client *c;
+
+	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
+	if (n == 0)
+		return;
+
+    x = m->wx;
+    y = m->wy;
+    mw = (m->nmaster > 0) ? m->ww * m->mfact : 0;
+
+	/* draw the master(s) first, centered */
+	/* note that left and right of master area is intentionally left empty */
+	if (m->nmaster > 0) {
+		x = m->wx + (m->ww - mw) /  2;
+		y = m->wy;
+		w = mw / m->nmaster;
+		h = m->wh;
+		i = 0;
+		for (c = nexttiled(m->clients); i < nmaster; c = nexttiled(c->next)) {
+			resize(c, x, y, w, h, 0);
+			x += w;
+			i++;
+		}
+	}
+
+	/* draw all but one of the remaining windows in a single stack, tiled */
+	if (n > m->nmaster + 1) {
+        /* retain c and x */
+		w = m->ww - x;
+		h = m->wh / (n - m->nmaster - 1);
+		y = m->wy;
+		for (; c && nexttiled(c->next) /* don't tile the last window */; c = nexttiled(c->next)) {
+			resize(c, x, y, w, h, 0);
+			y += h;
+			i++;
+		}
+	}
+
+	/* draw the last (i.e. oldest) window, if any, in the left column */
+	if (c) {
+		x = m->wx;
+		y = m->wy;
+		w = (m->ww - mw) / 2;
+		h = m->wh;
+		resize(c, x, y, w, h, 0);
+	}
 }
 
 void
