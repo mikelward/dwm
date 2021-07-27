@@ -260,6 +260,7 @@ static void updatesystrayiconstate(Client *i, XPropertyEvent *ev);
 static void updatetitle(Client *c);
 static void updatewindowtype(Client *c);
 static void updatewmhints(Client *c);
+static void vertile(Monitor *);
 static void view(const Arg *arg);
 static Client *wintoclient(Window w);
 static Monitor *wintomon(Window w);
@@ -960,6 +961,49 @@ firstcenter(Monitor *m)
 		w = (m->ww - mw) / 2;
 		h = m->wh;
 		resize(c, x, y, w, h, 0);
+	}
+}
+
+void
+vertile(Monitor *m)
+{
+	unsigned int i, n, x, y, w, h, mw;
+	Client *c;
+
+	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
+	if (n == 0)
+		return;
+
+	i = 0;
+	x = m->wx;
+	y = m->wy;
+	mw = (m->nmaster > 0) ? m->ww * m->mfact : 0;
+	c = nexttiled(m->clients);
+
+	/* draw the master(s) first, on the left */
+	if (m->nmaster > 0) {
+		x = m->wx;
+		y = m->wy;
+		w = mw / m->nmaster;
+		h = m->wh;
+		for (; c && i < m->nmaster; c = nexttiled(c->next)) {
+			resize(c, x, y, w, h, 0);
+			x += w;
+			i++;
+		}
+	}
+
+	/* draw all of the remaining windows in a single stack, tiled */
+	if (n > m->nmaster) {
+		/* retain c and x */
+		w = m->ww - x;
+		h = m->wh / (n - m->nmaster);
+		y = m->wy;
+		for (; c; c = nexttiled(c->next)) {
+			resize(c, x, y, w, h, 0);
+			y += h;
+			i++;
+		}
 	}
 }
 
