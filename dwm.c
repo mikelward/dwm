@@ -917,7 +917,7 @@ expose(XEvent *e)
 void
 firstcenter(Monitor *m)
 {
-	unsigned int i, n, x, y, w, h, mw;
+	unsigned int i, n, x, y, w, h, mw, sw;
 	Client *c;
 
 	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
@@ -925,16 +925,16 @@ firstcenter(Monitor *m)
 		return;
 
 	i = 0;
-	x = m->wx;
-	y = m->wy;
 	mw = (m->nmaster > 0) ? m->ww * m->mfact : 0;
+	sw = (m->ww - mw) / 2;
+	/* leave room for the left-side stack: it's drawn last */
+	x = m->wx + sw;
+	y = m->wy;
 	c = nexttiled(m->clients);
 
 	/* draw the master(s) first, centered */
 	/* note that left and right of master area is intentionally left empty */
 	if (m->nmaster > 0) {
-		x = m->wx + (m->ww - mw) /  2;
-		y = m->wy;
 		w = mw / m->nmaster;
 		h = m->wh;
 		for (; c && i < m->nmaster; c = nexttiled(c->next)) {
@@ -949,7 +949,6 @@ firstcenter(Monitor *m)
 		/* retain c and x */
 		w = m->ww - x;
 		h = m->wh / (n - m->nmaster - 1);
-		y = m->wy;
 		for (; c && nexttiled(c->next) /* don't tile the last window */; c = nexttiled(c->next)) {
 			resize(c, x, y, w, h, 0);
 			y += h;
@@ -961,7 +960,7 @@ firstcenter(Monitor *m)
 	if (c) {
 		x = m->wx;
 		y = m->wy;
-		w = (m->ww - mw) / 2;
+		w = sw;
 		h = m->wh;
 		resize(c, x, y, w, h, 0);
 	}
