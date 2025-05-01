@@ -947,7 +947,7 @@ firstcenter(Monitor *m)
 	/* draw all but one of the remaining windows in a single stack, tiled */
 	if (n > m->nmaster + 1) {
 		/* retain c and x */
-		w = m->ww - x;
+		w = m->ww - mw;
 		h = m->wh / (n - m->nmaster - 1);
 		for (; c && nexttiled(c->next) /* don't tile the last window */; c = nexttiled(c->next)) {
 			resize(c, x, y, w, h, 0);
@@ -998,7 +998,7 @@ vertile(Monitor *m)
 	/* draw all of the remaining windows in a single stack, tiled */
 	if (n > m->nmaster) {
 		/* retain c and x */
-		w = m->ww - x;
+		w = m->ww - mw;
 		h = m->wh / (n - m->nmaster);
 		y = m->wy;
 		for (; c; c = nexttiled(c->next)) {
